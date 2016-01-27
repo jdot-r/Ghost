@@ -1,7 +1,6 @@
 namespace Mohi\Ghost\Task;
 
 use pocketmine\scheduler\Task;
-use Mohi\Ghost\Ghost;
 
 class GhostTask extends Task {
 	public $player, $ghost;
