@@ -1,2 +1,2 @@
 # Ghost
-Players can be a ghost after they die
+Players can be a ghost whenever they die
