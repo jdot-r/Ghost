@@ -13,8 +13,9 @@ use Mohi\Ghost\Task\GhostTask;
 class Ghost extends PluginBase implements Listener {
 	private $ghost, $config;
 	public function onEnable() {
+		@mkdir($this->getDataFolder());
 		$this->config = $this->loadDB();
-		if(! isset($this->config[sec]))
+		if(! isset($this->config["sex"]))
 			$this->config["sec"] = 120;
 		if(! isset($this->config["Enable"]))
 			$this->config["Enable"] = "true";
@@ -46,13 +47,14 @@ class Ghost extends PluginBase implements Listener {
 					$this->config["sec"] = $args[2];
 					break;
 			}
+			return;
 		}
 	}
 	public function onDeath(PlayerDeathEvent $event) {
 		if($this->ghost[$event->getPlayer()->getName()] == true && $this->config["Enable"] == "true") {
 			$event->getEntity()->setHealth(20);
 			$event->getPlayer()->setGamemode(3);
-			Server::getInstance()->getScheduler()-	>scheduleDelayTask(new GhostTask($this, $event->getPlayer(), $this->ghost), $this->ghostsec * 30);
+			Server::getInstance()->getScheduler()-	>scheduleDelayTask(new GhostTask($this, $event->getPlayer(), $this->ghost), $this->config["sec"] * 30);
  		}
 	}
 	public function onJoin(PlayerJoinEvent $event) {
