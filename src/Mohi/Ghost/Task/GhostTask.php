@@ -1,3 +1,4 @@
+<?php
 namespace Mohi\Ghost\Task;
 
 use pocketmine\scheduler\Task;
@@ -14,3 +15,4 @@ class GhostTask extends Task {
 		$this->ghost[$this->player->getName()] = false;
 	}
 }
+?>
