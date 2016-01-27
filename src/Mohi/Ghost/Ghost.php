@@ -6,6 +6,9 @@ use pocketmine\Player;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
+use Mohi\Ghost\Task\GhostTask;
 
 class Ghost extends PluginBase implements Listener {
 	private $ghost, $config;
@@ -13,6 +16,7 @@ class Ghost extends PluginBase implements Listener {
 		$this->config = $this->loadDB();
 		if(! isset($this->config[sec]))
 			$this->config["sec"] = 120;
+		if(! isset($this->config["Enable"]))
 			$this->config["Enable"] = "true";
 		$this->getServer()->getPluginManager()->registerEvent($this, $this);
 	}
@@ -20,7 +24,7 @@ class Ghost extends PluginBase implements Listener {
 		$this->save("config.json", $this->config);
 	}
 	public function onCommand(CommandSender $sender, Command $command, $label, Array $args) {
-		if(strlower($args[0]) == ghost) {
+		if(strlower($args[0]) == "ghost") {
 			if(! isset($args[1])) {
 				$this->alert($sender, "/ghost <on|off|sec>");
 				return;
@@ -39,10 +43,8 @@ class Ghost extends PluginBase implements Listener {
 						$this->alert($sender, "초(sec)를 적어주세요");
 						break;
 					}
-					if($this->config["sec"] === $args[2])
-						$this->config["sec"] = $args[2];
-					else
-						$this->alert($sender, "숫자를 적어주세요");
+					$this->config["sec"] = $args[2];
+					break;
 			}
 		}
 	}
