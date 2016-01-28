@@ -8,13 +8,14 @@ class GhostTask extends PluginTask {
 	protected $owner;
 	public $player;
 	public function __construct($plugin, Player $player) {
-		$this->owner = $owner;
+		parent::__construct($plugin);
+		$this->owner = $plugin;
 		$this->player = $player;
 	}
 	public function onRun($currentTick) {
+		$this->player->teleport($this->player->getLevel()-> getSpawnLocation());
 		$this->player->setGamemode(0);
 		$this->owner->setGhost($this->player, false);
-		$this->player->setHealth(0);
-		$this->owner->setGhost($this->player, true);
 	}
 }
+?>
