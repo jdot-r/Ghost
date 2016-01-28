@@ -34,8 +34,7 @@ class Ghost extends PluginBase implements Listener {
 	 	$commandMap->register ( $fallback, $command );
 	 	}
 	public function onCommand(CommandSender $sender, Command $command, $label, Array $args) {
-		if(! isset($args[0])) {
-			$this->alert($sender, "/ghost <on|off|sec>");
+		if(! isset($args[0])){
 			return false;
 		}
 		switch(strtolower($args[0])) {
