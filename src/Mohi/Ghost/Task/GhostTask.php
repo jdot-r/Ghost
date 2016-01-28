@@ -1,9 +1,9 @@
 <?php
 namespace Mohi\Ghost\Task;
 
-use pocketmine\scheduler\Task;
+use pocketmine\scheduler\PluginTask;
 
-class GhostTask extends Task {
+class GhostTask extends PluginTask {
 	public $player, $ghost;
 	public function __construct(Plugin $plugin, Player $player, &$ghost) {
 		parent::__construct($plugin);
