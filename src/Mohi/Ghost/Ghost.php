@@ -1,3 +1,4 @@
+<?php
 namespace Mohi\Ghost;
 
 use pocketmine\plugin\PluginBase;
