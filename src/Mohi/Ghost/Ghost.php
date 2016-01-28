@@ -38,7 +38,7 @@ class Ghost extends PluginBase implements Listener {
 			$this->alert($sender, "/ghost <on|off|sec>");
 			return false;
 		}
-		switch(strlower($args[0])) {
+		switch(strtolower($args[0])) {
 			case "on":
 				$this->config["Enable"] = "true";
 				$this->save("config.json", $this->config);
@@ -79,14 +79,14 @@ class Ghost extends PluginBase implements Listener {
 	public function setGhost(Player $player, $bool) {
 		$this->ghost[$player->getName()] = $bool;
 	}
-	public function alert(Player $player, $message, $prefix = NULL){
+	public function alert(CommandSender $player, $message, $prefix = NULL){
 		if($prefix===NULL){
 			$prefix = "[Ghost]";
 		}
 		$player->sendMessage(TextFormat::RED.$prefix." $message");
 	}
 	
-	public function message(Player $player, $message, $prefix = NULL){
+	public function message(CommandSender $player, $message, $prefix = NULL){
 		if($prefix===NULL){
 			$prefix = "[Ghost]";
 		}
