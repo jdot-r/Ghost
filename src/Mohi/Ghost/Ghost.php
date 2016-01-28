@@ -42,7 +42,7 @@ class Ghost extends PluginBase implements Listener {
 		if(strtolower($command) == "ghost") {
 			if(! isset($args[0])) {
 				$this->alert($sender, "/ghost <on|off|sec>");
-				return;
+				return true;
 			}
 			switch(strlower($args[0])) {
 				case on:
@@ -61,7 +61,7 @@ class Ghost extends PluginBase implements Listener {
 					$this->config["sec"] = $args[2];
 					break;
 			}
-			return;
+			return true;
 		}
 	}
 	public function onDeath(PlayerDeathEvent $event) {
