@@ -82,9 +82,6 @@ class Ghost extends PluginBase implements Listener {
 	public function alert(CommandSender $sender, $message, $prefix = "[Ghost]"){
 		$sender->sendMessage(TextFormat::RED.$prefix." $message");
 	}
-	public function message(CommandSender $sender, $message, $prefix = "[Ghost]"){
-		$sender->sendMessage(TextFormat::DARK_AQUA.$prefix." $message");
-	}
 	 public function loadDB() {
 		$this->config = (new Config($this->getDataFolder()."config.json", Config::JSON, ["sec" => 30, "Enable" => true]))->getAll();
 	}
