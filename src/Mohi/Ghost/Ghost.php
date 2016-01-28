@@ -52,6 +52,7 @@ class Ghost extends PluginBase implements Listener {
 					break;
 				}
 				$this->config["sec"] = $args[1];
+				$this->alert($sender, $this->config["sec"]."초로 설정되었습니다." );
 				break;
 			default:
 				return false;

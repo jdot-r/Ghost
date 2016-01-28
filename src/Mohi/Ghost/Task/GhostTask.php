@@ -15,6 +15,7 @@ class GhostTask extends PluginTask {
 	public function onRun($currentTick) {
 		$this->player->teleport($this->player->getLevel()-> getSpawnLocation());
 		$this->player->setGamemode(0);
+		$this->owner->alert($this->player, "리스폰되었습니다.");
 		$this->owner->setGhost($this->player, false);
 	}
 }
