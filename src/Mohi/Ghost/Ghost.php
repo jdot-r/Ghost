@@ -19,10 +19,6 @@ class Ghost extends PluginBase implements Listener {
 	public function onEnable() {
 		@mkdir($this->getDataFolder());
 		$this->config = $this->loadDB();
-		if(! isset($this->config["sec"]))
-			$this->config["sec"] = 30;
-		if(! isset($this->config["Enable"]))
-			$this->config["Enable"] = "true";
 		$this->registerCommand("ghost", "Ghost", "ghost.command.allow", "플레이어가 죽으면 유령이 됩니다.", "/ghost <on|off|sec>");
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
@@ -97,7 +93,7 @@ class Ghost extends PluginBase implements Listener {
 		$player->sendMessage(TextFormat::DARK_AQUA.$prefix." $message");
 	}
 	 public function loadDB() {
-		$this->config = (new Config($this->getDataFolder()."config.json", Config::JSON))->getAll();
+		$this->config = (new Config($this->getDataFolder()."config.json", Config::JSON, ["sec" => 30, "Enable" => "true"]))->getAll();
 	}
 	public function save($db, $param) {
 		$dbsave = (new Config ($this->getDataFolder().$db, Config::JSON));
