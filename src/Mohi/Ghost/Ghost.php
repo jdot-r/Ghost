@@ -59,21 +59,28 @@ class Ghost extends PluginBase implements Listener {
 		return true;
 	}
 	public function onDeath(PlayerDeathEvent $event) {
-		if($this->ghost[$event->getEntity()->getName()] == true && $this->config["Enable"] == true) {
+		if ($event->getEntity()->isOp()){
+			return;
+		}
+		if($this->ghost[$event->getEntity()->getName()] == false && $this->config["Enable"] == true) {
 			$this->alert($event->getEntity(), "당신은 유령이 되었습니다.");
 			$this->alert($event->getEntity(), $this->config["sec"]."초 후 리스폰합니다.");
 			$event->getEntity()->setHealth(20);
 			$event->getEntity()->setGamemode(3);
+			$this->setGhost($event->getEntity(), true);
 			$this->getServer()->getScheduler()->scheduleDelayedTask(new GhostTask($this, $event->getEntity()), $this->config["sec"] * 20);
  		}
 	}
 	public function onJoin(PlayerJoinEvent $event) {
 		if($event->getPlayer()->isSpectator())
 			$event->getPlayer()->setGamemode(0);
-		$this->ghost[$event->getPlayer()->getName()] = true;
+		$this->ghost[$event->getPlayer()->getName()] = false;
 	}
 	public function onQuit(PlayerQuitEvent $event) {
-		unset($this->ghost[$event->getPlayer()->getName()]);
+		$player = $event->getPlayer();
+		unset($this->ghost[$player->getName()]);
+		if (!$player->isOp())
+			$this->getServer()->getNetwork()->blockAddress($player-> getAddress(), 30);
 	}
 	public function setGhost(Player $player, $bool) {
 		$this->ghost[$player->getName()] = $bool;
@@ -90,3 +97,4 @@ class Ghost extends PluginBase implements Listener {
 		$dbsave->save();
 	}
 }
+?>
