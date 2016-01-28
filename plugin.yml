@@ -5,3 +5,7 @@ version: "1.0"
 api:
 - 1.13.0
 - 2.0.0
+permissions:
+ ghost.command.allow:
+  descript: "Ghost command permission"
+  default: OP
