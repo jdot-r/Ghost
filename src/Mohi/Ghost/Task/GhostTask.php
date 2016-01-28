@@ -5,9 +5,10 @@ use pocketmine\scheduler\PluginTask;
 use pocketmine\Player;
 
 class GhostTask extends PluginTask {
-	public $player, $ghost;
+	protected $owner;
+	public $player;
 	public function __construct($plugin, Player $player) {
-		parent::__construct($plugin);
+		$this->owner = $owner;
 		$this->player = $player;
 	}
 	public function onRun($currentTick) {
@@ -17,4 +18,3 @@ class GhostTask extends PluginTask {
 		$this->owner->setGhost($this->player, true);
 	}
 }
-?>
