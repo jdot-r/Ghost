@@ -40,11 +40,11 @@ class Ghost extends PluginBase implements Listener {
 		}
 		switch(strtolower($args[0])) {
 			case "on":
-				$this->config["Enable"] = "true";
+				$this->config["Enable"] = true;
 				$this->save("config.json", $this->config);
 				break;
 			case "off":
-				$this->config["Enable"] = "false";
+				$this->config["Enable"] = false;
 				$this->save("config.json", $this->config);
 				break;
 			case "sec":
@@ -60,7 +60,7 @@ class Ghost extends PluginBase implements Listener {
 		return true;
 	}
 	public function onDeath(PlayerDeathEvent $event) {
-		if($this->ghost[$event->getEntity()->getName()] == true && $this->config["Enable"] == "true") {
+		if($this->ghost[$event->getEntity()->getName()] == true && $this->config["Enable"] == true) {
 			$this->alert($event->getEntity(), "당신은 유령이 되었습니다.");
 			$this->alert($event->getEntity(), $this->config["sec"]."초 후 리스폰합니다.");
 			$event->getEntity()->setHealth(20);
@@ -93,7 +93,7 @@ class Ghost extends PluginBase implements Listener {
 		$player->sendMessage(TextFormat::DARK_AQUA.$prefix." $message");
 	}
 	 public function loadDB() {
-		$this->config = (new Config($this->getDataFolder()."config.json", Config::JSON, ["sec" => 30, "Enable" => "true"]))->getAll();
+		$this->config = (new Config($this->getDataFolder()."config.json", Config::JSON, ["sec" => 30, "Enable" => true]))->getAll();
 	}
 	public function save($db, $param) {
 		$dbsave = (new Config ($this->getDataFolder().$db, Config::JSON));
