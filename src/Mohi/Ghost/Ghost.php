@@ -73,7 +73,7 @@ class Ghost extends PluginBase implements Listener {
  		}
 	}
 	public function onJoin(PlayerJoinEvent $event) {
-		if($event->getPlayer()->getGamemode() == 3)
+		if($event->getPlayer()->isSpectator())
 			$event->getPlayer()->setGamemode(0);
 		$this->ghost[$event->getPlayer()->getName()] = true;
 	}
