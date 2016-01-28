@@ -18,7 +18,7 @@ class Ghost extends PluginBase implements Listener {
 	public $ghost, $config;
 	public function onEnable() {
 		@mkdir($this->getDataFolder());
-		$this->config = $this->loadDB();
+		$this->loadDB();
 		$this->registerCommand("ghost", "Ghost", "ghost.command.allow", "플레이어가 죽으면 유령이 됩니다.", "/ghost <on|off|sec>");
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
