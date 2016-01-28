@@ -84,14 +84,14 @@ class Ghost extends PluginBase implements Listener {
 		$this->ghost[$player->getName()] = $bool;
 	}
 	public function alert(Player $player, $message, $prefix = NULL){
-		if($prefix==NULL){
+		if($prefix===NULL){
 			$prefix = "[Ghost]";
 		}
 		$player->sendMessage(TextFormat::RED.$prefix." $message");
 	}
 	
 	public function message(Player $player, $message, $prefix = NULL){
-		if($prefix==NULL){
+		if($prefix===NULL){
 			$prefix = "[Ghost]";
 		}
 		$player->sendMessage(TextFormat::DARK_AQUA.$prefix." $message");
