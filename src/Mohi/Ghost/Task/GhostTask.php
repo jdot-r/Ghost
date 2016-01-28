@@ -2,17 +2,19 @@
 namespace Mohi\Ghost\Task;
 
 use pocketmine\scheduler\PluginTask;
+use pocketmine\Player;
 
 class GhostTask extends PluginTask {
 	public $player, $ghost;
-	public function __construct(Plugin $plugin, Player $player, &$ghost) {
+	public function __construct($plugin, Player $player) {
 		parent::__construct($plugin);
-		$player = $this->player;
-		$ghost = $this->ghost;
+		$this->player = $player;
 	}
-	public function onRun() {
+	public function onRun($currentTick) {
 		$this->player->setGamemode(0);
-		$this->ghost[$this->player->getName()] = false;
+		$this->owner->setGhost($this->player, false);
+		$this->player->setHealth(0);
+		$this->owner->setGhost($this->player, true);
 	}
 }
 ?>

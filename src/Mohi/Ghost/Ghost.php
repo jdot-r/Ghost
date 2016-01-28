@@ -4,29 +4,42 @@ namespace Mohi\Ghost;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\Player;
+use pocketmine\Server;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use Mohi\Ghost\Task\GhostTask;
+use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
+use pocketmine\command\PluginCommand;
 
 class Ghost extends PluginBase implements Listener {
-	private $ghost, $config;
+	public $ghost, $config;
 	public function onEnable() {
 		@mkdir($this->getDataFolder());
 		$this->config = $this->loadDB();
-		if(! isset($this->config["sex"]))
-			$this->config["sec"] = 120;
+		if(! isset($this->config["sec"]))
+			$this->config["sec"] = 30;
 		if(! isset($this->config["Enable"]))
 			$this->config["Enable"] = "true";
-		$this->getServer()->getPluginManager()->registerEvent($this, $this);
+		$this->registerCommand("ghost", "Ghost", "ghost.command.allow", "플레이어가 죽으면 유령이 됩니다.", "/ghost <on|off|sec>");
+		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
 	public function onDisable() {
 		$this->save("config.json", $this->config);
 	}
+	 public function registerCommand($name, $fallback, $permission, $description = "", $usage = "") {
+	 	$commandMap = $this->getServer ()->getCommandMap ();	
+	 	$command = new PluginCommand ( $name, $this );
+	 	$command->setDescription ( $description );	
+	 	$command->setPermission ( $permission );
+	 	$command->setUsage ( $usage );
+	 	$commandMap->register ( $fallback, $command );
+	 	}
 	public function onCommand(CommandSender $sender, Command $command, $label, Array $args) {
-		if(strlower($args[0]) == "ghost") {
+		if(strtolower($args[0]) == "ghost") {
 			if(! isset($args[1])) {
 				$this->alert($sender, "/ghost <on|off|sec>");
 				return;
@@ -52,10 +65,12 @@ class Ghost extends PluginBase implements Listener {
 		}
 	}
 	public function onDeath(PlayerDeathEvent $event) {
-		if($this->ghost[$event->getPlayer()->getName()] == true && $this->config["Enable"] == "true") {
+		if($this->ghost[$event->getEntity()->getName()] == true && $this->config["Enable"] == "true") {
+			$this->alert($event->getEntity(), "당신은 유령이 되었습니다.");
+		 $this->alert($event->getEntity(), $this->config["sec"]."초 후 리스폰합니다.");
 			$event->getEntity()->setHealth(20);
-			$event->getPlayer()->setGamemode(3);
-			Server::getInstance()->getScheduler()-	>scheduleDelayTask(new GhostTask($this, $event->getPlayer(), $this->ghost), $this->config["sec"] * 30);
+			$event->getEntity()->setGamemode(3);
+			Server::getInstance()->getScheduler()->scheduleDelayedTask(new GhostTask($this, $event->getEntity()), $this->config["sec"] * 20);
  		}
 	}
 	public function onJoin(PlayerJoinEvent $event) {
@@ -67,6 +82,9 @@ class Ghost extends PluginBase implements Listener {
 	public function onQuit(PlayerQuitEvent $event) {
 		unset($this->ghost[$event->getPlayer()->getName()]);
 		return;
+	}
+	public function setGhost(Player $player, $bool) {
+		$this->ghost[$player->getName()] = $bool;
 	}
 	public function alert(Player $player, $message, $prefix = NULL){
 		if($prefix==NULL){
@@ -88,7 +106,7 @@ class Ghost extends PluginBase implements Listener {
 		return;
 	}
 	public function save($db, $param) {
-		$dbsave = (new Config ($this-getDataFolder().$db, Config::JSON));
+		$dbsave = (new Config ($this->getDataFolder().$db, Config::JSON));
 		$dbsave->setAll($param);
 		$dbsave->save();
 		return;
