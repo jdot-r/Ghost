@@ -41,12 +41,12 @@ class Ghost extends PluginBase implements Listener {
 			case "on":
 				$this->config["Enable"] = true;
 				$this->alert($sender, "Ghost가 켜졌습니다.");
-				$this->save("config.json", $this->config);
+				$this->save("config.json", $this->config, true);
 				break;
 			case "off":
 				$this->config["Enable"] = false;
 				$this->alert($sender, "Ghost가 꺼졌습니다.");
-				$this->save("config.json", $this->config);
+				$this->save("config.json", $this->config, true);
 				break;
 			case "sec":
 				if(! isset($args[1])){
@@ -98,10 +98,10 @@ class Ghost extends PluginBase implements Listener {
 	 public function loadDB() {
 		$this->config = (new Config($this->getDataFolder()."config.json", Config::JSON, ["sec" => 30, "Enable" => true]))->getAll();
 	}
-	public function save($db, $param) {
+	public function save($db, $param, $async = false) {
 		$dbsave = (new Config ($this->getDataFolder().$db, Config::JSON));
 		$dbsave->setAll($param);
-		$dbsave->save();
+		$dbsave->save($async);
 	}
 }
 ?>
