@@ -15,7 +15,7 @@ use pocketmine\utils\TextFormat;
 use pocketmine\command\PluginCommand;
 
 class Ghost extends PluginBase implements Listener {
-	public $ghost, $config;
+	public $ghost, $inventory, $config;
 	public function onEnable() {
 		@mkdir($this->getDataFolder());
 		$this->loadDB();
@@ -40,10 +40,12 @@ class Ghost extends PluginBase implements Listener {
 		switch(strtolower($args[0])) {
 			case "on":
 				$this->config["Enable"] = true;
+				$this->alert($sender, "Ghost가 켜졌습니다.");
 				$this->save("config.json", $this->config);
 				break;
 			case "off":
 				$this->config["Enable"] = false;
+				$this->alert($sender, "Ghost가 꺼졌습니다.");
 				$this->save("config.json", $this->config);
 				break;
 			case "sec":
@@ -60,28 +62,32 @@ class Ghost extends PluginBase implements Listener {
 		return true;
 	}
 	public function onDeath(PlayerDeathEvent $event) {
-		if ($event->getEntity()->isOp()){
+		$player = $player;
+		if ($player->isOp()){
 			return;
 		}
-		if($this->ghost[$event->getEntity()->getName()] == false && $this->config["Enable"] == true) {
-			$this->alert($event->getEntity(), "당신은 유령이 되었습니다.");
-			$this->alert($event->getEntity(), $this->config["sec"]."초 후 리스폰합니다.");
-			$event->getEntity()->setHealth(20);
-			$event->getEntity()->setGamemode(3);
-			$this->setGhost($event->getEntity(), true);
-			$this->getServer()->getScheduler()->scheduleDelayedTask(new GhostTask($this, $event->getEntity()), $this->config["sec"] * 20);
+		if($this->ghost[$player->getName()] == false && $this->config["Enable"] == true) {
+			$player->setHealth(20);
+			$this->inventory[$player->getName()] = $player->getInventory()->getContents();
+			$player->setGamemode(3);
+			$this->alert($player, "당신은 유령이 되었습니다.");
+			$this->alert($player, $this->config["sec"]."초 후 리스폰합니다.");
+			$this->setGhost($player, true);
+			$this->getServer()->getScheduler()->scheduleDelayedTask(new GhostTask($this, $player), $this->config["sec"] * 20);
  		}
 	}
 	public function onJoin(PlayerJoinEvent $event) {
-		if($event->getPlayer()->isSpectator())
-			$event->getPlayer()->setGamemode(0);
 		$this->ghost[$event->getPlayer()->getName()] = false;
 	}
 	public function onQuit(PlayerQuitEvent $event) {
 		$player = $event->getPlayer();
+		if($player->isSpectator())
+			$player->setGamemode(0);
+		if (!$player->isOp() && $this->ghost[$player->getName()] == true) {
+			$player->getInventory()->setContents($this->inventory[$player->getName()]);
+			$this->getServer()->getNetwork()->blockAddress($player-> getAddress(), $this->config["sec"] * 20);
+		}
 		unset($this->ghost[$player->getName()]);
-		if (!$player->isOp())
-			$this->getServer()->getNetwork()->blockAddress($player-> getAddress(), 30);
 	}
 	public function setGhost(Player $player, $bool) {
 		$this->ghost[$player->getName()] = $bool;
