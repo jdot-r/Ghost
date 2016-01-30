@@ -85,7 +85,7 @@ class Ghost extends PluginBase implements Listener {
 			$player->setGamemode(0);
 		if (!$player->isOp() && $this->ghost[$player->getName()] == true) {
 			$player->getInventory()->setContents($this->inventory[$player->getName()]);
-			$this->getServer()->getNetwork()->blockAddress($player-> getAddress(), $this->config["sec"] * 20);
+			$this->getServer()->getNetwork()->blockAddress($player-> getAddress(), $this->config["sec"]);
 		}
 		unset($this->ghost[$player->getName()]);
 	}
