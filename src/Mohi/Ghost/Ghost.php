@@ -13,6 +13,7 @@ use Mohi\Ghost\Task\GhostTask;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use pocketmine\command\PluginCommand;
+use pocketmine\event\block\BlockBreakEvent;
 
 class Ghost extends PluginBase implements Listener {
 	public $ghost, $inventory, $config;
