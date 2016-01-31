@@ -77,6 +77,12 @@ class Ghost extends PluginBase implements Listener {
 			$this->getServer()->getScheduler()->scheduleDelayedTask(new GhostTask($this, $player), $this->config["sec"] * 20);
  		}
 	}
+	public function onBlockBreak(BlockBreakEvent $event) {
+		if($this->ghost[$event->getPlayer()->getName()] = true) //if Player is Ghost
+			$this->alert($event->getPlayer(), "유령 주제에 어딜!");
+			$this->alert($event->getPlayer(), "악령은 썩 물럿거라 - 물외한인(MohiPE)");
+			$event->setCancelled();
+	}
 	public function onJoin(PlayerJoinEvent $event) {
 		$this->ghost[$event->getPlayer()->getName()] = false;
 	}
