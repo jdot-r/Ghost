@@ -14,26 +14,32 @@ use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use pocketmine\command\PluginCommand;
 use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\entity\EntityArmorChangeEvent;
+use pocketmine\event\player\PlayerDropItemEvent;
 
 class Ghost extends PluginBase implements Listener {
 	public $ghost, $inventory, $config;
+	
 	public function onEnable() {
 		@mkdir($this->getDataFolder());
 		$this->loadDB();
 		$this->registerCommand("ghost", "Ghost", "ghost.command.allow", "플레이어가 죽으면 유령이 됩니다.", "/ghost <on|off|sec>");
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
+	
 	public function onDisable() {
 		$this->save("config.json", $this->config);
 	}
-	 public function registerCommand($name, $fallback, $permission, $description = "", $usage = "") {
-	 	$commandMap = $this->getServer ()->getCommandMap ();	
+	
+	public function registerCommand($name, $fallback, $permission, $description = "", $usage = "") {
+		$commandMap = $this->getServer ()->getCommandMap ();	
 	 	$command = new PluginCommand ( $name, $this );
 	 	$command->setDescription ( $description );	
 	 	$command->setPermission ( $permission );
 	 	$command->setUsage ( $usage );
 	 	$commandMap->register ( $fallback, $command );
-	 	}
+	}
+	 	
 	public function onCommand(CommandSender $sender, Command $command, $label, Array $args) {
 		if(! isset($args[0])){
 			return false;
@@ -62,6 +68,7 @@ class Ghost extends PluginBase implements Listener {
 		}
 		return true;
 	}
+	
 	public function onDeath(PlayerDeathEvent $event) {
 		$player = $event->getEntity();
 		if ($player->isOp()){
@@ -69,8 +76,10 @@ class Ghost extends PluginBase implements Listener {
 		}
 		if($this->ghost[$player->getName()] == false && $this->config["Enable"] == true) {
 			$player->setHealth(20);
+			if($player->getY() < 0) {
+				$player->teleport($player->getLevel()-> getSpawnLocation());
+			}
 			$this->inventory[$player->getName()]["inventory"] = $player->getInventory()->getContents();
-			$this->inventory[$player->getName()]["armor"] = $player->getInventory()->getArmorContents();
 			$player->setGamemode(3);
 			$this->alert($player, "당신은 유령이 되었습니다.");
 			$this->alert($player, $this->config["sec"]."초 후 리스폰합니다.");
@@ -78,35 +87,57 @@ class Ghost extends PluginBase implements Listener {
 			$this->getServer()->getScheduler()->scheduleDelayedTask(new GhostTask($this, $player), $this->config["sec"] * 20);
  		}
 	}
-	public function onBlockBreak(BlockBreakEvent $event) {
-		if($this->ghost[$event->getPlayer()->getName()] = true) //if Player is Ghost
+	
+	public function onArmor(EntityArmorChangeEvent $event) {
+		$player = $event->getEntity();
+		if($this->ghost[$player->getName()] == true) {
+			$this->alert($player->getName(), "유령 주제에 어딜!");
+			$this->alert($player->getName(), "악령은 썩 물럿거라 - 물외한인(MohiPE)");
+			$event->setCancelled();
+		}
+	}
+	public function onDropItem(PlayerDropItemEvent $event) {
+		if($this->ghost[$event->getPlayer()->getName()] == true) {//if Player is Ghost
 			$this->alert($event->getPlayer(), "유령 주제에 어딜!");
 			$this->alert($event->getPlayer(), "악령은 썩 물럿거라 - 물외한인(MohiPE)");
 			$event->setCancelled();
+		}
 	}
+	public function onBlockBreak(BlockBreakEvent $event) {
+		if($this->ghost[$event->getPlayer()->getName()] == true) {//if Player is Ghost
+			$this->alert($event->getPlayer(), "유령 주제에 어딜!");
+			$this->alert($event->getPlayer(), "악령은 썩 물럿거라 - 물외한인(MohiPE)");
+			$event->setCancelled();
+		}
+	}
+	
 	public function onJoin(PlayerJoinEvent $event) {
 		$this->ghost[$event->getPlayer()->getName()] = false;
 	}
+	
 	public function onQuit(PlayerQuitEvent $event) {
 		$player = $event->getPlayer();
 		if($player->isSpectator())
 			$player->setGamemode(0);
 		if (!$player->isOp() && $this->ghost[$player->getName()] == true) {
 			$player->getInventory()->setContents($this->inventory[$player->getName()]["inventory"]);
-			$player->getInventory()->setArmorContents($this->inventory[$player->getName()]["armor"]);
 			$this->getServer()->getNetwork()->blockAddress($player-> getAddress(), 600);
 		}
 		unset($this->ghost[$player->getName()]);
 	}
+	
 	public function setGhost(Player $player, $bool) {
 		$this->ghost[$player->getName()] = $bool;
 	}
+	
 	public function alert(CommandSender $sender, $message, $prefix = "[Ghost]"){
 		$sender->sendMessage(TextFormat::RED.$prefix." $message");
 	}
+	
 	public function loadDB() {
 	$this->config = (new Config($this->getDataFolder()."config.json", Config::JSON, ["sec" => 30, "Enable" => true]))->getAll();
 	}
+	
 	public function save($db, $param, $async = false) {
 		$dbsave = (new Config ($this->getDataFolder().$db, Config::JSON));
 		$dbsave->setAll($param);

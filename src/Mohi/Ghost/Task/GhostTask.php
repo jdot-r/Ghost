@@ -16,7 +16,6 @@ class GhostTask extends PluginTask {
 		$this->player->teleport($this->player->getLevel()-> getSpawnLocation());
 		$this->player->setGamemode(0);
 		$this->player->getInventory()->setContents($this->owner->inventory[$this->player->getName()]["inventory"]);
-		$player->getInventory()->setArmorContents($this->owner->inventory[$this->player->getName()]["armor"]);
 		$this->owner->alert($this->player, "리스폰되었습니다.");
 		$this->owner->setGhost($this->player, false);
 	}
