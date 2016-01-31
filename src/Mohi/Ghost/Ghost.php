@@ -69,7 +69,7 @@ class Ghost extends PluginBase implements Listener {
 		if($this->ghost[$player->getName()] == false && $this->config["Enable"] == true) {
 			$player->setHealth(20);
 			$this->inventory[$player->getName()]["inventory"] = $player->getInventory()->getContents();
-			$this->inventory[$player->getName()]["armor"] = $player->getArmorContents();
+			$this->inventory[$player->getName()]["armor"] = $player->getInventory()->getArmorContents();
 			$player->setGamemode(3);
 			$this->alert($player, "당신은 유령이 되었습니다.");
 			$this->alert($player, $this->config["sec"]."초 후 리스폰합니다.");
